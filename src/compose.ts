@@ -44,9 +44,15 @@ export function suggestAssets(
         synonyms.forEach((word) => expanded.add(stem(word)));
     }
   }
-  return assets
+  const requestsBackground =
+    queryWords.includes("фон") || queryWords.includes("background");
+  const ranked = assets
     .map((asset, index) => {
       const haystack = words([asset.name, ...asset.tags].join(" ")).map(stem);
+      const backgroundVariant = /\s+(фон|background)$/iu.test(asset.name);
+      const baseName = asset.name
+        .toLowerCase()
+        .replace(/\s+(фон|background)$/iu, "");
       const score = haystack.reduce(
         (total, word) =>
           total +
@@ -61,11 +67,23 @@ export function suggestAssets(
               : 0),
         0,
       );
-      return { asset, score, index };
+      return { asset, score, index, baseName, backgroundVariant };
     })
     .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || a.index - b.index)
-    .slice(0, Math.min(count, assets.length))
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        Number(a.backgroundVariant) - Number(b.backgroundVariant) ||
+        a.index - b.index,
+    );
+  const seen = new Set<string>();
+  return ranked
+    .filter((item) => {
+      if (!requestsBackground && seen.has(item.baseName)) return false;
+      seen.add(item.baseName);
+      return true;
+    })
+    .slice(0, count)
     .map((item) => item.asset);
 }
 

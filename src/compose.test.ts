@@ -32,4 +32,18 @@ describe("подбор объектов", () => {
   it("не подставляет случайные объекты при отсутствии совпадений", () => {
     expect(suggestAssets("Подводная лодка", library, 5, "objects")).toEqual([]);
   });
+
+  it("не дублирует цветную и фоновую версию одного предмета", () => {
+    const variants = [
+      asset("Лампа фон"),
+      asset("Лампа"),
+      asset("Пазлы фон"),
+      asset("Пазлы"),
+    ];
+    expect(
+      suggestAssets("Идея проекта", variants, 5, "metaphor").map(
+        (item) => item.name,
+      ),
+    ).toEqual(["Лампа", "Пазлы"]);
+  });
 });

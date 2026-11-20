@@ -2,7 +2,8 @@
   min-height: 100vh;
 }
 .app-shell {
-  min-height: 100vh;
+  height: 100vh;
+  min-height: 620px;
   display: flex;
   flex-direction: column;
 }
@@ -641,8 +642,15 @@ select {
   }
 }
 @media (max-width: 900px) {
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+  }
   .workspace {
     grid-template-columns: 220px minmax(320px, 1fr);
+  }
+  .canvas-panel {
+    min-height: 500px;
   }
   .inspector-panel {
     grid-column: 1/-1;
