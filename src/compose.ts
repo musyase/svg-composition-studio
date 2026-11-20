@@ -28,6 +28,15 @@ function stem(word: string): string {
   );
 }
 
+function sameRoot(left: string, right: string): boolean {
+  const a = stem(left);
+  const b = stem(right);
+  return (
+    a === b ||
+    (Math.min(a.length, b.length) >= 4 && (a.startsWith(b) || b.startsWith(a)))
+  );
+}
+
 export type Scenario = "metaphor" | "objects";
 
 export function suggestAssets(
@@ -40,7 +49,7 @@ export function suggestAssets(
   const expanded = new Set(queryWords.map(stem));
   if (scenario === "metaphor") {
     for (const [term, synonyms] of Object.entries(related)) {
-      if (queryWords.some((word) => stem(word) === stem(term)))
+      if (queryWords.some((word) => sameRoot(word, term)))
         synonyms.forEach((word) => expanded.add(stem(word)));
     }
   }
@@ -58,11 +67,7 @@ export function suggestAssets(
           total +
           (expanded.has(word)
             ? 3
-            : queryWords.some(
-                  (queryWord) =>
-                    word.includes(stem(queryWord)) ||
-                    stem(queryWord).includes(word),
-                )
+            : queryWords.some((queryWord) => sameRoot(queryWord, word))
               ? 1
               : 0),
         0,
