@@ -259,7 +259,7 @@ function App() {
     }
     setPalette({
       name: file.name.replace(/\.[^.]+$/, ""),
-      colors,
+      colors: colors.length > 1 ? colors.slice(1) : colors,
       background: colors[0],
     });
     setError("");
