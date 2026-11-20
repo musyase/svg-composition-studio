@@ -458,7 +458,10 @@ function App() {
           <div className="canvas-scroll">
             <div
               className="canvas-frame"
-              style={{ aspectRatio: `${size.width} / ${size.height}` }}
+              style={{
+                aspectRatio: `${size.width} / ${size.height}`,
+                width: `min(100%, 900px, calc((100vh - 280px) * ${size.width / size.height}))`,
+              }}
             >
               <svg
                 ref={stage}
